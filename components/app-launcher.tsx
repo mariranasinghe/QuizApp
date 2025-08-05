@@ -43,13 +43,13 @@ export function AppLauncher({ onClose, onSelectApp }: AppLauncherProps) {
     {
       id: "study-timer",
       name: "Study Timer",
-      icon: <Clock className="h-8 w-8 text-white" />, // Icon for Study Timer
+      icon: <Clock className="h-8 w-8 text-white" />,
       color: "bg-yellow-500",
     },
     {
       id: "dictionary",
       name: "Dictionary",
-      icon: <Book className="h-8 w-8 text-white" />,
+      icon: <Book className="h-8 w-8 text-white" />, // Dictionary icon
       color: "bg-red-500",
     },
     {
