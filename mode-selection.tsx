@@ -14,6 +14,7 @@ import { FlashcardsApp } from "@/components/flashcards-app" // Import Flashcards
 import { CalculatorApp } from "@/components/calculator-app" // Import CalculatorApp
 import { StudyTimerApp } from "@/components/study-timer-app" // Import StudyTimerApp
 import { DictionaryApp } from "@/components/dictionary-app" // Import DictionaryApp
+import { ResearchApp } from "@/components/research-app" // Import ResearchApp
 
 export type QuizMode = "normal" | "timed" | "survival" | "survival-practice"
 export type QuizCategory =
@@ -59,6 +60,7 @@ export default function ModeSelection() {
     | "calculator-app"
     | "study-timer-app"
     | "dictionary-app"
+    | "research-app" // Add research-app view
   >("quiz-selection")
   const [selectedApp, setSelectedApp] = useState<string | null>(null) // To track which app is selected in launcher
 
@@ -158,9 +160,12 @@ export default function ModeSelection() {
       setSelectedApp("study-timer")
       setCurrentView("study-timer-app")
     } else if (appId === "dictionary") {
-      // Add this condition
       setSelectedApp("dictionary")
       setCurrentView("dictionary-app")
+    } else if (appId === "research") {
+      // Add this condition
+      setSelectedApp("research")
+      setCurrentView("research-app")
     } else {
       alert(`Launching ${appId} (simulated)`)
       // For other apps, you might render different components or external links
@@ -268,6 +273,11 @@ export default function ModeSelection() {
   // Render DictionaryApp
   if (currentView === "dictionary-app" && selectedApp === "dictionary") {
     return <DictionaryApp onClose={handleCloseApp} />
+  }
+
+  // Render ResearchApp
+  if (currentView === "research-app" && selectedApp === "research") {
+    return <ResearchApp onClose={handleCloseApp} />
   }
 
   const averageScorePercentage =

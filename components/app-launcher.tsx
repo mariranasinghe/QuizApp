@@ -11,8 +11,8 @@ import {
   Book,
   Lightbulb,
   ArrowLeft,
-  Sparkles,
   GraduationCap,
+  SearchIcon,
 } from "lucide-react"
 
 interface AppLauncherProps {
@@ -49,7 +49,7 @@ export function AppLauncher({ onClose, onSelectApp }: AppLauncherProps) {
     {
       id: "dictionary",
       name: "Dictionary",
-      icon: <Book className="h-8 w-8 text-white" />, // Dictionary icon
+      icon: <Book className="h-8 w-8 text-white" />,
       color: "bg-red-500",
     },
     {
@@ -61,7 +61,7 @@ export function AppLauncher({ onClose, onSelectApp }: AppLauncherProps) {
     {
       id: "research",
       name: "Research",
-      icon: <Sparkles className="h-8 w-8 text-white" />,
+      icon: <SearchIcon className="h-8 w-8 text-white" />, // Using SearchIcon for Research
       color: "bg-cyan-500",
     },
     {
