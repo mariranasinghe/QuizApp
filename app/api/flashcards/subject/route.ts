@@ -1,0 +1,703 @@
+import { NextResponse } from "next/server"
+import type { Flashcard } from "@/types/flashcards"
+
+// Helper function to shuffle an array
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+const allSubjectFlashcards: Flashcard[] = [
+  // Math
+  { front: "What is the value of Pi (π) rounded to two decimal places?", back: "3.14", subject: "Math" },
+  { front: "What is the square root of 144?", back: "12", subject: "Math" },
+  {
+    front: "If a triangle has angles 30 and 60 degrees, what is the third angle?",
+    back: "90 degrees",
+    subject: "Math",
+  },
+  { front: "What is 7 factorial (7!)?", back: "5040", subject: "Math" },
+  {
+    front: "What is the next number in the Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8, 13, ...?",
+    back: "21",
+    subject: "Math",
+  },
+  { front: "What is the derivative of x^2?", back: "2x", subject: "Math" },
+  { front: "What is the integral of 1/x?", back: "ln|x| + C", subject: "Math" },
+  { front: "What is the sum of the interior angles of a hexagon?", back: "720 degrees", subject: "Math" },
+  { front: "What is the formula for the area of a circle?", back: "πr²", subject: "Math" },
+  { front: "What is the Pythagorean theorem?", back: "a² + b² = c²", subject: "Math" },
+  { front: "What is the value of Euler's number (e) rounded to two decimal places?", back: "2.72", subject: "Math" },
+  { front: "What is the result of 5 mod 2?", back: "1", subject: "Math" },
+  { front: "How many sides does a nonagon have?", back: "9", subject: "Math" },
+  { front: "What is the inverse operation of multiplication?", back: "Division", subject: "Math" },
+  { front: "What is the smallest prime number?", back: "2", subject: "Math" },
+  { front: "What is the sum of the first 10 natural numbers?", back: "55", subject: "Math" },
+  { front: "What is the formula for the circumference of a circle?", back: "2πr or πd", subject: "Math" },
+  { front: "What is the value of 0! (zero factorial)?", back: "1", subject: "Math" },
+  { front: "What is the name of a polygon with 8 sides?", back: "Octagon", subject: "Math" },
+  { front: "What is the slope-intercept form of a linear equation?", back: "y = mx + b", subject: "Math" },
+  { front: "What is the value of sin(90 degrees)?", back: "1", subject: "Math" },
+  { front: "What is the value of cos(0 degrees)?", back: "1", subject: "Math" },
+  { front: "What is the name of the longest side of a right-angled triangle?", back: "Hypotenuse", subject: "Math" },
+  {
+    front: "What is the term for a number that can be divided by only 1 and itself?",
+    back: "Prime number",
+    subject: "Math",
+  },
+  { front: "What is the next number in the sequence: 1, 4, 9, 16, 25, ...?", back: "36", subject: "Math" },
+  { front: "What is the formula for the volume of a sphere?", back: "4/3πr³", subject: "Math" },
+  { front: "What is the value of log base 10 of 100?", back: "2", subject: "Math" },
+  {
+    front: "What is the name of a triangle with all sides of equal length?",
+    back: "Equilateral triangle",
+    subject: "Math",
+  },
+  { front: "What is the sum of angles in a straight line?", back: "180 degrees", subject: "Math" },
+  { front: "What is the name of the graph of a quadratic equation?", back: "Parabola", subject: "Math" },
+
+  // History
+  { front: "When did World War II end?", back: "1945", subject: "History" },
+  { front: "Who was the first president of the United States?", back: "George Washington", subject: "History" },
+  { front: "Who painted the Mona Lisa?", back: "Leonardo da Vinci", subject: "History" },
+  { front: "In which year did the Battle of Hastings take place?", back: "1066", subject: "History" },
+  {
+    front: "Who was the Roman emperor who made Christianity the state religion?",
+    back: "Theodosius I",
+    subject: "History",
+  },
+  { front: "What year did the Berlin Wall fall?", back: "1989", subject: "History" },
+  { front: "Who was the leader of the Soviet Union during World War II?", back: "Joseph Stalin", subject: "History" },
+  { front: "What ancient civilization built the pyramids?", back: "Egyptians", subject: "History" },
+  { front: "Who was the queen of England during the Spanish Armada?", back: "Elizabeth I", subject: "History" },
+  {
+    front: "What event is considered the start of the French Revolution?",
+    back: "Storming of the Bastille",
+    subject: "History",
+  },
+  {
+    front: "Who was the primary author of the Declaration of Independence?",
+    back: "Thomas Jefferson",
+    subject: "History",
+  },
+  { front: "What was the Silk Road?", back: "An ancient network of trade routes", subject: "History" },
+  {
+    front: "Which war was fought between the North and South in the United States?",
+    back: "American Civil War",
+    subject: "History",
+  },
+  {
+    front: "Who was the famous general who crossed the Alps with elephants?",
+    back: "Hannibal Barca",
+    subject: "History",
+  },
+  {
+    front: "What was the name of the ship that brought the Pilgrims to America?",
+    back: "Mayflower",
+    subject: "History",
+  },
+  { front: "Who was the last pharaoh of ancient Egypt?", back: "Cleopatra VII", subject: "History" },
+  { front: "What year did the Titanic sink?", back: "1912", subject: "History" },
+  { front: "Who was the leader of Nazi Germany?", back: "Adolf Hitler", subject: "History" },
+  {
+    front: "What was the main cause of the Hundred Years' War?",
+    back: "Succession to the French throne",
+    subject: "History",
+  },
+  { front: "Who was the first man on the moon?", back: "Neil Armstrong", subject: "History" },
+  { front: "What was the name of the ancient city buried by Mount Vesuvius?", back: "Pompeii", subject: "History" },
+  {
+    front: "Who was the famous explorer who discovered America in 1492?",
+    back: "Christopher Columbus",
+    subject: "History",
+  },
+  {
+    front: "What was the Magna Carta?",
+    back: "A charter of rights agreed to by King John of England",
+    subject: "History",
+  },
+  { front: "When did the American Revolutionary War begin?", back: "1775", subject: "History" },
+  { front: "Who was the founder of the Mongol Empire?", back: "Genghis Khan", subject: "History" },
+  { front: "What was the Cold War?", back: "A geopolitical rivalry between the US and USSR", subject: "History" },
+  { front: "What year did the Great Depression begin?", back: "1929", subject: "History" },
+  { front: "Who was the first female Prime Minister of the UK?", back: "Margaret Thatcher", subject: "History" },
+  { front: "What was the purpose of the Rosetta Stone?", back: "To decipher Egyptian hieroglyphs", subject: "History" },
+  { front: "Which empire was ruled by Julius Caesar?", back: "Roman Empire", subject: "History" },
+
+  // Science
+  { front: "What is H2O?", back: "Water", subject: "Science" },
+  { front: "What is the largest planet in our solar system?", back: "Jupiter", subject: "Science" },
+  { front: "What is the chemical symbol for Gold?", back: "Au", subject: "Science" },
+  { front: "Which planet is known as the Red Planet?", back: "Mars", subject: "Science" },
+  { front: "What is the chemical symbol for oxygen?", back: "O", subject: "Science" },
+  { front: "What is the process by which plants make their own food?", back: "Photosynthesis", subject: "Science" },
+  {
+    front: "What is the force that pulls objects towards the center of the Earth?",
+    back: "Gravity",
+    subject: "Science",
+  },
+  { front: "What is the smallest unit of matter?", back: "Atom", subject: "Science" },
+  { front: "What is the study of living organisms called?", back: "Biology", subject: "Science" },
+  { front: "What is the hardest natural substance on Earth?", back: "Diamond", subject: "Science" },
+  { front: "What is the name of the galaxy our solar system is in?", back: "Milky Way", subject: "Science" },
+  { front: "What is the boiling point of water in Celsius?", back: "100°C", subject: "Science" },
+  { front: "What is the main gas that makes up the Earth's atmosphere?", back: "Nitrogen", subject: "Science" },
+  { front: "What is the process of a liquid turning into a gas?", back: "Evaporation", subject: "Science" },
+  { front: "What is the largest organ in the human body?", back: "Skin", subject: "Science" },
+  {
+    front: "What is the speed of light in a vacuum?",
+    back: "Approximately 299,792,458 meters per second",
+    subject: "Science",
+  },
+  { front: "What is the powerhouse of the cell?", back: "Mitochondria", subject: "Science" },
+  { front: "What type of energy is stored in a battery?", back: "Chemical energy", subject: "Science" },
+  { front: "What is the name of the instrument used to measure earthquakes?", back: "Seismograph", subject: "Science" },
+  { front: "What is the most abundant element in the Earth's crust?", back: "Oxygen", subject: "Science" },
+  { front: "What is the process of a solid turning directly into a gas?", back: "Sublimation", subject: "Science" },
+  {
+    front: "What is the name of the scientist who developed the theory of relativity?",
+    back: "Albert Einstein",
+    subject: "Science",
+  },
+  { front: "What is the basic unit of heredity?", back: "Gene", subject: "Science" },
+  { front: "What is the name of the outermost layer of the Earth?", back: "Crust", subject: "Science" },
+  { front: "What is the chemical symbol for sodium?", back: "Na", subject: "Science" },
+  { front: "What is the pH of a neutral solution?", back: "7", subject: "Science" },
+  { front: "What is the study of fungi called?", back: "Mycology", subject: "Science" },
+  { front: "What is the process of nuclear fusion?", back: "Combining atomic nuclei", subject: "Science" },
+  { front: "What is the largest bone in the human body?", back: "Femur", subject: "Science" },
+  { front: "What is the primary function of red blood cells?", back: "Transport oxygen", subject: "Science" },
+
+  // Literature
+  { front: "Who wrote 'Romeo and Juliet'?", back: "William Shakespeare", subject: "Literature" },
+  { front: "Who wrote 'To Kill a Mockingbird'?", back: "Harper Lee", subject: "Literature" },
+  { front: "What is the primary setting of George Orwell's '1984'?", back: "London (Oceania)", subject: "Literature" },
+  { front: "Who wrote 'One Hundred Years of Solitude'?", back: "Gabriel García Márquez", subject: "Literature" },
+  { front: "Who is the author of 'The Great Gatsby'?", back: "F. Scott Fitzgerald", subject: "Literature" },
+  {
+    front: "What is the name of the protagonist in 'The Catcher in the Rye'?",
+    back: "Holden Caulfield",
+    subject: "Literature",
+  },
+  { front: "Which novel features the character Atticus Finch?", back: "To Kill a Mockingbird", subject: "Literature" },
+  { front: "Who wrote 'Pride and Prejudice'?", back: "Jane Austen", subject: "Literature" },
+  {
+    front: "What is the famous opening line of 'A Tale of Two Cities'?",
+    back: "It was the best of times, it was the worst of times.",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'The Odyssey'?", back: "Homer", subject: "Literature" },
+  { front: "What is the name of the whale in 'Moby Dick'?", back: "Moby Dick", subject: "Literature" },
+  { front: "Who wrote 'Frankenstein'?", back: "Mary Shelley", subject: "Literature" },
+  { front: "What is the setting of 'The Lord of the Rings'?", back: "Middle-earth", subject: "Literature" },
+  { front: "Who wrote 'Don Quixote'?", back: "Miguel de Cervantes", subject: "Literature" },
+  { front: "What is the name of the protagonist in 'Jane Eyre'?", back: "Jane Eyre", subject: "Literature" },
+  { front: "Who wrote 'The Raven'?", back: "Edgar Allan Poe", subject: "Literature" },
+  {
+    front: "What is the central theme of 'Hamlet'?",
+    back: "Revenge, madness, moral corruption",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'War and Peace'?", back: "Leo Tolstoy", subject: "Literature" },
+  {
+    front: "What is the name of the dystopian society in 'Brave New World'?",
+    back: "World State",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'The Adventures of Huckleberry Finn'?", back: "Mark Twain", subject: "Literature" },
+  {
+    front: "What is the name of the detective in Arthur Conan Doyle's stories?",
+    back: "Sherlock Holmes",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'Wuthering Heights'?", back: "Emily Brontë", subject: "Literature" },
+  {
+    front: "What is the main conflict in 'The Old Man and the Sea'?",
+    back: "Man vs. nature (struggle with a giant marlin)",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'Crime and Punishment'?", back: "Fyodor Dostoevsky", subject: "Literature" },
+  {
+    front: "What is the name of the magical land in C.S. Lewis's 'The Chronicles of Narnia'?",
+    back: "Narnia",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'The Handmaid's Tale'?", back: "Margaret Atwood", subject: "Literature" },
+  {
+    front: "What is a haiku?",
+    back: "A Japanese poem of seventeen syllables, in three lines of five, seven, and five",
+    subject: "Literature",
+  },
+  { front: "Who is the author of 'The Lord of the Flies'?", back: "William Golding", subject: "Literature" },
+  {
+    front: "What is the literary device of giving human qualities to inanimate objects?",
+    back: "Personification",
+    subject: "Literature",
+  },
+  { front: "Who wrote 'The Canterbury Tales'?", back: "Geoffrey Chaucer", subject: "Literature" },
+
+  // Geography
+  { front: "What is the capital of France?", back: "Paris", subject: "Geography" },
+  { front: "What is the largest ocean on Earth?", back: "Pacific Ocean", subject: "Geography" },
+  { front: "What is the smallest country in the world?", back: "Vatican City", subject: "Geography" },
+  { front: "How many continents are there?", back: "7", subject: "Geography" },
+  { front: "What is the longest river in South America?", back: "Amazon River", subject: "Geography" },
+  { front: "What is the highest mountain in Africa?", back: "Mount Kilimanjaro", subject: "Geography" },
+  { front: "Which country has the most natural lakes?", back: "Canada", subject: "Geography" },
+  { front: "What is the only continent with land in all four hemispheres?", back: "Africa", subject: "Geography" },
+  { front: "What is the capital of Burkina Faso?", back: "Ouagadougou", subject: "Geography" },
+  { front: "Which country is the largest producer of coffee in the world?", back: "Brazil", subject: "Geography" },
+  {
+    front: "What is the name of the deepest point in the Earth's oceans?",
+    back: "Mariana Trench",
+    subject: "Geography",
+  },
+  { front: "What is the capital of Japan?", back: "Tokyo", subject: "Geography" },
+  { front: "Which desert is the largest hot desert in the world?", back: "Sahara Desert", subject: "Geography" },
+  { front: "What is the longest mountain range in the world?", back: "Andes", subject: "Geography" },
+  { front: "Which country is known as the 'Land of the Rising Sun'?", back: "Japan", subject: "Geography" },
+  { front: "What is the largest island in the world?", back: "Greenland", subject: "Geography" },
+  { front: "Which river flows through London?", back: "River Thames", subject: "Geography" },
+  { front: "What is the capital of Australia?", back: "Canberra", subject: "Geography" },
+  { front: "Which country is famous for its fjords?", back: "Norway", subject: "Geography" },
+  { front: "What is the highest waterfall in the world?", back: "Angel Falls", subject: "Geography" },
+  { front: "Which sea is located between Europe and Africa?", back: "Mediterranean Sea", subject: "Geography" },
+  { front: "What is the capital of Canada?", back: "Ottawa", subject: "Geography" },
+  { front: "Which continent is the driest?", back: "Antarctica", subject: "Geography" },
+  {
+    front: "What is the name of the strait that separates Spain from Morocco?",
+    back: "Strait of Gibraltar",
+    subject: "Geography",
+  },
+  { front: "Which country is home to the Great Barrier Reef?", back: "Australia", subject: "Geography" },
+  { front: "What is the capital of Germany?", back: "Berlin", subject: "Geography" },
+  { front: "What is the longest river in Asia?", back: "Yangtze River", subject: "Geography" },
+  { front: "Which country is known for the Great Wall?", back: "China", subject: "Geography" },
+  { front: "What is the largest freshwater lake by volume?", back: "Lake Baikal", subject: "Geography" },
+  { front: "Which mountain range separates Europe and Asia?", back: "Ural Mountains", subject: "Geography" },
+
+  // Philosophy
+  { front: "Which philosopher is known for the concept of 'Tabula Rasa'?", back: "John Locke", subject: "Philosophy" },
+  {
+    front: "Which philosopher is famous for the quote 'I think, therefore I am'?",
+    back: "René Descartes",
+    subject: "Philosophy",
+  },
+  {
+    front: "What is the central concept of utilitarianism?",
+    back: "Greatest good for the greatest number",
+    subject: "Philosophy",
+  },
+  { front: "Who wrote 'Thus Spoke Zarathustra'?", back: "Friedrich Nietzsche", subject: "Philosophy" },
+  {
+    front: "What is the Socratic method?",
+    back: "A form of cooperative argumentative dialogue",
+    subject: "Philosophy",
+  },
+  { front: "Who developed the concept of the 'categorical imperative'?", back: "Immanuel Kant", subject: "Philosophy" },
+  {
+    front: "What is existentialism?",
+    back: "A philosophy emphasizing individual existence, freedom, and responsibility",
+    subject: "Philosophy",
+  },
+  { front: "Who wrote 'The Republic'?", back: "Plato", subject: "Philosophy" },
+  {
+    front: "What is the 'Allegory of the Cave'?",
+    back: "Plato's metaphor for the effects of education on the human soul",
+    subject: "Philosophy",
+  },
+  { front: "Who is considered the father of modern philosophy?", back: "René Descartes", subject: "Philosophy" },
+  {
+    front: "What is the 'Golden Mean' in Aristotle's ethics?",
+    back: "Desirable middle between two extremes",
+    subject: "Philosophy",
+  },
+  { front: "Who argued that 'God is dead'?", back: "Friedrich Nietzsche", subject: "Philosophy" },
+  {
+    front: "What is empiricism?",
+    back: "The theory that all knowledge is derived from sense-experience",
+    subject: "Philosophy",
+  },
+  { front: "Who wrote 'Leviathan'?", back: "Thomas Hobbes", subject: "Philosophy" },
+  {
+    front: "What is the 'veil of ignorance' in Rawls' theory of justice?",
+    back: "A thought experiment to determine principles of justice",
+    subject: "Philosophy",
+  },
+  { front: "Who is known for the concept of 'will to power'?", back: "Friedrich Nietzsche", subject: "Philosophy" },
+  {
+    front: "What is rationalism?",
+    back: "The belief that reason is the primary source of knowledge",
+    subject: "Philosophy",
+  },
+  { front: "Who wrote 'Meditations on First Philosophy'?", back: "René Descartes", subject: "Philosophy" },
+  {
+    front: "What is the 'Euthyphro Dilemma'?",
+    back: "A dilemma concerning the source of morality (divine command or inherent goodness)",
+    subject: "Philosophy",
+  },
+  { front: "Who is the author of 'Being and Nothingness'?", back: "Jean-Paul Sartre", subject: "Philosophy" },
+  {
+    front: "What is the 'problem of evil'?",
+    back: "The difficulty of reconciling the existence of evil with an omnipotent, omnibenevolent God",
+    subject: "Philosophy",
+  },
+  { front: "Who developed the concept of 'dialectical materialism'?", back: "Karl Marx", subject: "Philosophy" },
+  {
+    front: "What is the 'Ship of Theseus' paradox?",
+    back: "A thought experiment about identity over time",
+    subject: "Philosophy",
+  },
+  { front: "Who wrote 'Critique of Pure Reason'?", back: "Immanuel Kant", subject: "Philosophy" },
+  {
+    front: "What is the 'Trolley Problem'?",
+    back: "A thought experiment in ethics about sacrificing one to save many",
+    subject: "Philosophy",
+  },
+  {
+    front: "What is Stoicism?",
+    back: "An ancient Greek philosophy that teaches the development of self-control and fortitude as a means of overcoming destructive emotions.",
+    subject: "Philosophy",
+  },
+  { front: "Who was a student of Plato and teacher of Alexander the Great?", back: "Aristotle", subject: "Philosophy" },
+  { front: "What is the concept of 'Cogito, ergo sum'?", back: "I think, therefore I am", subject: "Philosophy" },
+  {
+    front: "What is the 'Categorical Imperative'?",
+    back: "Kant's ethical formula: act only according to a maxim whereby you can at the same time will that it should become a universal law.",
+    subject: "Philosophy",
+  },
+  { front: "Who wrote 'Beyond Good and Evil'?", back: "Friedrich Nietzsche", subject: "Philosophy" },
+
+  // Art
+  { front: "Who painted 'Starry Night'?", back: "Vincent van Gogh", subject: "Art" },
+  { front: "What art movement is Salvador Dalí associated with?", back: "Surrealism", subject: "Art" },
+  { front: "Who sculpted 'David'?", back: "Michelangelo", subject: "Art" },
+  { front: "What is 'Chiaroscuro'?", back: "The use of strong contrasts between light and dark", subject: "Art" },
+  { front: "Which artist is known for his 'cut-outs'?", back: "Henri Matisse", subject: "Art" },
+  { front: "What is the name of the famous painting by Edvard Munch?", back: "The Scream", subject: "Art" },
+  { front: "Who is considered the father of Cubism?", back: "Pablo Picasso", subject: "Art" },
+  {
+    front: "What is 'Impressionism'?",
+    back: "An art movement characterized by small, thin, yet visible brush strokes",
+    subject: "Art",
+  },
+  { front: "Who painted 'Girl with a Pearl Earring'?", back: "Johannes Vermeer", subject: "Art" },
+  {
+    front: "What is 'Pop Art'?",
+    back: "An art movement that emerged in the 1950s, challenging traditional fine art by including imagery from popular and mass culture",
+    subject: "Art",
+  },
+  { front: "Who created the 'Campbell's Soup Cans' series?", back: "Andy Warhol", subject: "Art" },
+  {
+    front: "What is 'Fresco' painting?",
+    back: "A technique of mural painting executed upon freshly laid, or wet lime plaster",
+    subject: "Art",
+  },
+  { front: "Who painted the ceiling of the Sistine Chapel?", back: "Michelangelo", subject: "Art" },
+  {
+    front: "What is 'Pointillism'?",
+    back: "A technique of painting in which small, distinct dots of color are applied in patterns to form an image",
+    subject: "Art",
+  },
+  { front: "Who is known for his 'dripping' technique in abstract art?", back: "Jackson Pollock", subject: "Art" },
+  {
+    front: "What is 'Gothic' architecture known for?",
+    back: "Pointed arches, ribbed vaults, flying buttresses",
+    subject: "Art",
+  },
+  { front: "Who painted 'The Last Supper'?", back: "Leonardo da Vinci", subject: "Art" },
+  {
+    front: "What is 'Renaissance' art?",
+    back: "A period of European art from the 14th to 16th centuries, characterized by a revival of classical forms and a focus on humanism",
+    subject: "Art",
+  },
+  { front: "Who is famous for his 'Water Lilies' series?", back: "Claude Monet", subject: "Art" },
+  {
+    front: "What is 'Surrealism'?",
+    back: "An art movement that sought to release the creative potential of the unconscious mind",
+    subject: "Art",
+  },
+  { front: "Who painted 'Guernica'?", back: "Pablo Picasso", subject: "Art" },
+  {
+    front: "What is 'Baroque' art?",
+    back: "A highly ornate and extravagant style of art and architecture prevalent in Europe from the early 17th to mid-18th century",
+    subject: "Art",
+  },
+  { front: "Who designed the Guggenheim Museum in Bilbao?", back: "Frank Gehry", subject: "Art" },
+  {
+    front: "What is 'Minimalism'?",
+    back: "An art movement that emerged in the 1960s, characterized by extreme simplicity of form and a literal, objective approach",
+    subject: "Art",
+  },
+  { front: "Who is known for his mobile sculptures?", back: "Alexander Calder", subject: "Art" },
+
+  // Music
+  { front: "Who composed 'Symphony No. 5'?", back: "Ludwig van Beethoven", subject: "Music" },
+  { front: "What instrument does Yo-Yo Ma play?", back: "Cello", subject: "Music" },
+  { front: "Who is known as the 'King of Pop'?", back: "Michael Jackson", subject: "Music" },
+  {
+    front: "What is a 'concerto'?",
+    back: "A musical composition for a solo instrument or instruments accompanied by an orchestra",
+    subject: "Music",
+  },
+  { front: "Who composed 'The Four Seasons'?", back: "Antonio Vivaldi", subject: "Music" },
+  { front: "What is the highest female vocal range?", back: "Soprano", subject: "Music" },
+  { front: "Who wrote the opera 'The Marriage of Figaro'?", back: "Wolfgang Amadeus Mozart", subject: "Music" },
+  {
+    front: "What is 'Jazz' music?",
+    back: "A genre of music that originated in the African-American communities of New Orleans, United States, in the late 19th and early 20th centuries",
+    subject: "Music",
+  },
+  { front: "Who is famous for his 'Bohemian Rhapsody'?", back: "Queen (band)", subject: "Music" },
+  {
+    front: "What is a 'fugue'?",
+    back: "A contrapuntal compositional technique in two or more voices, built on a subject (theme) that is introduced at the beginning in imitation and which recurs frequently in the course of the composition",
+    subject: "Music",
+  },
+  { front: "Who composed 'Clair de Lune'?", back: "Claude Debussy", subject: "Music" },
+  { front: "What is the lowest male vocal range?", back: "Bass", subject: "Music" },
+  { front: "Who is known for his rock and roll hits like 'Jailhouse Rock'?", back: "Elvis Presley", subject: "Music" },
+  {
+    front: "What is 'Reggae' music?",
+    back: "A music genre that originated in Jamaica in the late 1960s",
+    subject: "Music",
+  },
+  { front: "Who composed 'The Nutcracker' ballet?", back: "Pyotr Ilyich Tchaikovsky", subject: "Music" },
+  {
+    front: "What is a 'symphony'?",
+    back: "An elaborate musical composition for full orchestra, typically in four movements",
+    subject: "Music",
+  },
+  { front: "Who is the lead singer of U2?", back: "Bono", subject: "Music" },
+  {
+    front: "What is 'Blues' music?",
+    back: "A genre and musical form originated by African Americans in the Southern United States",
+    subject: "Music",
+  },
+  { front: "Who composed 'Eine kleine Nachtmusik'?", back: "Wolfgang Amadeus Mozart", subject: "Music" },
+  {
+    front: "What is 'Hip Hop' music?",
+    back: "A music genre developed in the United States by inner-city African Americans and Latino Americans in the 1970s",
+    subject: "Music",
+  },
+  { front: "Who is known for his guitar solos in Led Zeppelin?", back: "Jimmy Page", subject: "Music" },
+  {
+    front: "What is 'Opera'?",
+    back: "A dramatic work in one or more acts, set to music for singers and instrumentalists",
+    subject: "Music",
+  },
+  { front: "Who composed 'The Rite of Spring'?", back: "Igor Stravinsky", subject: "Music" },
+  {
+    front: "What is 'Country' music?",
+    back: "A genre of American popular music that originated in the Southern United States in the 1920s",
+    subject: "Music",
+  },
+  { front: "Who is the lead vocalist of Queen?", back: "Freddie Mercury", subject: "Music" },
+
+  // Technology
+  { front: "What does CPU stand for?", back: "Central Processing Unit", subject: "Technology" },
+  { front: "What is RAM?", back: "Random Access Memory", subject: "Technology" },
+  { front: "Who co-founded Apple Inc.?", back: "Steve Jobs and Steve Wozniak", subject: "Technology" },
+  {
+    front: "What is the most popular programming language for web development?",
+    back: "JavaScript",
+    subject: "Technology",
+  },
+  { front: "What does HTML stand for?", back: "HyperText Markup Language", subject: "Technology" },
+  {
+    front: "What is a 'firewall' in computing?",
+    back: "A network security system that monitors and controls incoming and outgoing network traffic",
+    subject: "Technology",
+  },
+  { front: "What does URL stand for?", back: "Uniform Resource Locator", subject: "Technology" },
+  {
+    front: "What is 'cloud computing'?",
+    back: "The delivery of on-demand computing services—from applications to storage and processing power—typically over the internet and on a pay-as-you-go basis",
+    subject: "Technology",
+  },
+  { front: "Who founded Microsoft?", back: "Bill Gates and Paul Allen", subject: "Technology" },
+  { front: "What is 'AI'?", back: "Artificial Intelligence", subject: "Technology" },
+  { front: "What does HTTP stand for?", back: "Hypertext Transfer Protocol", subject: "Technology" },
+  {
+    front: "What is a 'byte'?",
+    back: "A unit of digital information that most commonly consists of eight bits",
+    subject: "Technology",
+  },
+  { front: "What is 'VPN'?", back: "Virtual Private Network", subject: "Technology" },
+  { front: "Who invented the World Wide Web?", back: "Tim Berners-Lee", subject: "Technology" },
+  { front: "What is 'blockchain'?", back: "A decentralized, distributed ledger technology", subject: "Technology" },
+  { front: "What does USB stand for?", back: "Universal Serial Bus", subject: "Technology" },
+  {
+    front: "What is 'malware'?",
+    back: "Software that is specifically designed to disrupt, damage, or gain unauthorized access to a computer system",
+    subject: "Technology",
+  },
+  { front: "What is 'IoT'?", back: "Internet of Things", subject: "Technology" },
+  { front: "Who is the CEO of Tesla and SpaceX?", back: "Elon Musk", subject: "Technology" },
+  {
+    front: "What is 'open source' software?",
+    back: "Software with source code that anyone can inspect, modify, and enhance",
+    subject: "Technology",
+  },
+  { front: "What does CSS stand for?", back: "Cascading Style Sheets", subject: "Technology" },
+  {
+    front: "What is 'machine learning'?",
+    back: "A subset of AI that enables systems to learn from data without being explicitly programmed",
+    subject: "Technology",
+  },
+  {
+    front: "What is '5G'?",
+    back: "The fifth generation technology standard for broadband cellular networks",
+    subject: "Technology",
+  },
+  { front: "What is 'VR'?", back: "Virtual Reality", subject: "Technology" },
+  { front: "What is 'AR'?", back: "Augmented Reality", subject: "Technology" },
+
+  // Sports
+  { front: "How many players are on a soccer team?", back: "11", subject: "Sports" },
+  { front: "Which country won the first FIFA World Cup?", back: "Uruguay", subject: "Sports" },
+  { front: "How many points is a touchdown worth in American Football?", back: "6", subject: "Sports" },
+  { front: "Who is considered the greatest basketball player of all time?", back: "Michael Jordan", subject: "Sports" },
+  { front: "What is a 'birdie' in golf?", back: "One stroke under par on a hole", subject: "Sports" },
+  { front: "How many bases are there in baseball?", back: "4", subject: "Sports" },
+  { front: "What is the national sport of Japan?", back: "Sumo Wrestling", subject: "Sports" },
+  { front: "In which sport would you perform a 'slam dunk'?", back: "Basketball", subject: "Sports" },
+  { front: "What is the maximum number of clubs allowed in a golf bag?", back: "14", subject: "Sports" },
+  { front: "Which city hosted the 2016 Summer Olympics?", back: "Rio de Janeiro", subject: "Sports" },
+  { front: "What is the term for a perfect game in bowling?", back: "300", subject: "Sports" },
+  { front: "How long is a marathon race?", back: "26.2 miles (42.195 km)", subject: "Sports" },
+  { front: "Which country is famous for inventing cricket?", back: "England", subject: "Sports" },
+  { front: "What is the name of the trophy awarded to the NHL champions?", back: "Stanley Cup", subject: "Sports" },
+  {
+    front: "How many sets are played in a professional tennis match (men's singles)?",
+    back: "Best of 5 sets",
+    subject: "Sports",
+  },
+  { front: "What is the governing body of international football (soccer)?", back: "FIFA", subject: "Sports" },
+  { front: "Who holds the record for the most Olympic gold medals?", back: "Michael Phelps", subject: "Sports" },
+  { front: "What is the name of the sport played with a shuttlecock?", back: "Badminton", subject: "Sports" },
+  {
+    front: "In which sport is the 'Grand Slam' achieved by winning all four major tournaments?",
+    back: "Tennis or Golf",
+    subject: "Sports",
+  },
+  { front: "What is the diameter of a basketball hoop in inches?", back: "18 inches", subject: "Sports" },
+  { front: "Which famous boxer was known as 'The Greatest'?", back: "Muhammad Ali", subject: "Sports" },
+  {
+    front: "What is the objective of curling?",
+    back: "To slide stones on a sheet of ice towards a target area",
+    subject: "Sports",
+  },
+  { front: "How many players are on a standard volleyball team on the court?", back: "6", subject: "Sports" },
+  { front: "What is the name of the annual cycling race held in France?", back: "Tour de France", subject: "Sports" },
+  { front: "Which martial art originated in Korea?", back: "Taekwondo", subject: "Sports" },
+
+  // Animals
+  { front: "What is the largest mammal on Earth?", back: "Blue Whale", subject: "Animals" },
+  { front: "Which animal is known as the 'King of the Jungle'?", back: "Lion", subject: "Animals" },
+  { front: "What is a group of lions called?", back: "Pride", subject: "Animals" },
+  { front: "Which bird is known for its ability to mimic human speech?", back: "Parrot", subject: "Animals" },
+  { front: "What is the fastest land animal?", back: "Cheetah", subject: "Animals" },
+  { front: "Which animal lays the largest egg?", back: "Ostrich", subject: "Animals" },
+  { front: "What is a baby kangaroo called?", back: "Joey", subject: "Animals" },
+  { front: "Which animal has the longest lifespan?", back: "Greenland Shark", subject: "Animals" },
+  { front: "What is the only mammal that can truly fly?", back: "Bat", subject: "Animals" },
+  { front: "Which animal is known for its black and white stripes?", back: "Zebra", subject: "Animals" },
+  { front: "What is a group of fish called?", back: "School", subject: "Animals" },
+  { front: "Which animal has the strongest bite force?", back: "Saltwater Crocodile", subject: "Animals" },
+  { front: "What is the largest living reptile?", back: "Saltwater Crocodile", subject: "Animals" },
+  { front: "Which animal can change its skin color?", back: "Chameleon", subject: "Animals" },
+  { front: "What is a baby goat called?", back: "Kid", subject: "Animals" },
+  { front: "Which animal is known for its long neck?", back: "Giraffe", subject: "Animals" },
+  { front: "What is the largest type of big cat?", back: "Tiger", subject: "Animals" },
+  { front: "Which animal produces silk?", back: "Silkworm", subject: "Animals" },
+  { front: "What is a group of wolves called?", back: "Pack", subject: "Animals" },
+  {
+    front: "Which animal is known for its ability to regenerate limbs?",
+    back: "Starfish or Salamander",
+    subject: "Animals",
+  },
+  {
+    front: "What is the only continent where giraffes and zebras live in the wild?",
+    back: "Africa",
+    subject: "Animals",
+  },
+  { front: "Which animal has a trunk?", back: "Elephant", subject: "Animals" },
+  { front: "What is a group of owls called?", back: "Parliament", subject: "Animals" },
+  { front: "Which animal is known for building dams?", back: "Beaver", subject: "Animals" },
+  { front: "What is the largest land animal?", back: "African Bush Elephant", subject: "Animals" },
+
+  // Food
+  { front: "What is the main ingredient in guacamole?", back: "Avocado", subject: "Food" },
+  { front: "Which fruit is known as the 'king of fruits'?", back: "Durian", subject: "Food" },
+  { front: "What is 'sushi' traditionally made with?", back: "Vinegared rice", subject: "Food" },
+  { front: "Which country is the origin of pizza?", back: "Italy", subject: "Food" },
+  { front: "What is 'Tofu' made from?", back: "Soybeans", subject: "Food" },
+  { front: "What is the main ingredient in hummus?", back: "Chickpeas", subject: "Food" },
+  { front: "Which spice is the most expensive by weight?", back: "Saffron", subject: "Food" },
+  { front: "What is 'Kimchi'?", back: "A traditional Korean side dish of fermented vegetables", subject: "Food" },
+  { front: "Which type of pasta is shaped like small grains of rice?", back: "Orzo", subject: "Food" },
+  {
+    front: "What is 'Miso'?",
+    back: "A traditional Japanese seasoning produced by fermenting soybeans with salt and kōji",
+    subject: "Food",
+  },
+  {
+    front: "Which fruit is a good source of Vitamin C?",
+    back: "Orange (or many others like kiwi, strawberry)",
+    subject: "Food",
+  },
+  {
+    front: "What is 'Paella'?",
+    back: "A Spanish rice dish with various ingredients like seafood or chicken",
+    subject: "Food",
+  },
+  { front: "Which vegetable is known for making you cry when cut?", back: "Onion", subject: "Food" },
+  { front: "What is 'Feta' cheese made from?", back: "Sheep's milk (or a mix with goat's milk)", subject: "Food" },
+  { front: "What is the main ingredient in traditional 'Pesto' sauce?", back: "Basil", subject: "Food" },
+  { front: "Which country is famous for 'Maple Syrup'?", back: "Canada", subject: "Food" },
+  { front: "What is 'Quinoa'?", back: "A grain crop grown for its edible seeds", subject: "Food" },
+  { front: "Which type of chocolate is made without milk solids?", back: "Dark chocolate", subject: "Food" },
+  {
+    front: "What is 'Gazpacho'?",
+    back: "A cold soup made of raw, blended vegetables, originating in Spain",
+    subject: "Food",
+  },
+  { front: "Which nut is used to make 'Marzipan'?", back: "Almonds", subject: "Food" },
+  { front: "What is 'Balsamic Vinegar' made from?", back: "Grape must", subject: "Food" },
+  { front: "Which fruit is botanically a berry, but culinarily a vegetable?", back: "Tomato", subject: "Food" },
+  { front: "What is 'Chai'?", back: "A spiced tea beverage originating from India", subject: "Food" },
+  { front: "Which type of mushroom is highly prized and expensive?", back: "Truffle", subject: "Food" },
+  {
+    front: "What is 'Sourdough' bread known for?",
+    back: "Its distinct tangy flavor from fermentation",
+    subject: "Food",
+  },
+]
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const subject = searchParams.get("subject")
+
+  let filteredFlashcards: Flashcard[] = []
+
+  if (subject && subject !== "all") {
+    filteredFlashcards = allSubjectFlashcards.filter((card) => card.subject.toLowerCase() === subject.toLowerCase())
+  } else {
+    // If no specific subject or 'all', return a mix of subjects
+    filteredFlashcards = allSubjectFlashcards
+  }
+
+  // Shuffle and return a subset (e.g., up to 25 cards, or all if less than 25)
+  const shuffledFlashcards = shuffleArray(filteredFlashcards)
+  const flashcardsToReturn = shuffledFlashcards.slice(0, Math.min(shuffledFlashcards.length, 25)) // Limit to 25 for a reasonable set
+
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 300))
+
+  return NextResponse.json({ flashcards: flashcardsToReturn })
+}
