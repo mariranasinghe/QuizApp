@@ -3,17 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import {
-  BookOpen,
-  Calculator,
-  Clock,
-  FileText,
-  Book,
-  Lightbulb,
-  ArrowLeft,
-  GraduationCap,
-  SearchIcon,
-} from "lucide-react"
+import { BookOpen, Calculator, Clock, FileText, Book, Lightbulb, ArrowLeft, CheckSquare } from 'lucide-react'
 
 interface AppLauncherProps {
   onClose: () => void
@@ -59,16 +49,10 @@ export function AppLauncher({ onClose, onSelectApp }: AppLauncherProps) {
       color: "bg-indigo-500",
     },
     {
-      id: "research",
-      name: "Research",
-      icon: <SearchIcon className="h-8 w-8 text-white" />, // Using SearchIcon for Research
+      id: "todo-list",
+      name: "To-Do List",
+      icon: <CheckSquare className="h-8 w-8 text-white" />,
       color: "bg-cyan-500",
-    },
-    {
-      id: "syllabus",
-      name: "Syllabus",
-      icon: <GraduationCap className="h-8 w-8 text-white" />,
-      color: "bg-orange-500",
     },
   ]
 
