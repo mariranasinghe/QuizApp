@@ -2,6 +2,8 @@
 
 This project is a comprehensive study suite built with Next.js and TypeScript, centered around a feature-rich quiz game. It combines interactive learning with a set of essential productivity tools to create an all-in-one study hub.
 
+### [Try it out!](https://quiz-app-ten-ochre.vercel.app/)
+
 
 <p align="center">
 <img width="1827" height="883" alt="image" src="https://github.com/user-attachments/assets/75cf67d1-ecde-42dd-99c1-d14d3f1b9fa9" />
@@ -67,7 +69,7 @@ You will need to have Node.js (v18 or later) and pnpm installed on your system.
 1. Clone the repository:
 
   ```bash
-  git clone [https://github.com/mariranasinghe/QuizApp.git](https://github.com/mariranasinghe/QuizApp.git)
+  git clone https://github.com/mariranasinghe/QuizApp.git
   ```
 
 
