@@ -5,6 +5,9 @@ This project is a comprehensive study suite built with Next.js and TypeScript, c
 
 <p align="center">
 <img width="1827" height="883" alt="image" src="https://github.com/user-attachments/assets/75cf67d1-ecde-42dd-99c1-d14d3f1b9fa9" />
+  <p>
+    
+  </p>
 <img width="1062" height="796" alt="image" src="https://github.com/user-attachments/assets/7b395d8f-08bd-4e44-9e35-aabbd4905d7e" />
 </p>
 
